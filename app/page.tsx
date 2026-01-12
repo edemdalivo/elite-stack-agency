@@ -1,70 +1,78 @@
-'use client';
-import { useState } from 'react';
+'use client'
+import { supabase } from '@/lib/supabase'
+import { useState } from 'react'
 
-export default function HomePage() {
-  const [lang, setLang] = useState<'fr' | 'en'>('fr');
+export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [status, setStatus] = useState<{type: 'success' | 'error', msg: string} | null>(null)
 
-  const content = {
-    fr: {
-      hero: { title: "Elite Digital Solutions", desc: "Expert TypeScript & IA basé au Togo." },
-      services: [
-        { title: "Pack Starter", price: "50 000 F", desc: "Logo + Landing Page simple." },
-        { title: "Visibilité Express", price: "100 000 F", desc: "Branding + Site Mobile First." },
-        { title: "Site Vitrine Premium", price: "300 000 F", desc: "Site ultra-rapide & SEO Pro." }
-      ],
-      cta: "Commander via WhatsApp",
-      switch: "English"
-    },
-    en: {
-      hero: { title: "Elite Digital Solutions", desc: "TypeScript & AI Expert based in Togo." },
-      services: [
-        { title: "Starter Pack", price: "$400", desc: "Logo + Simple Landing Page." },
-        { title: "Express Visibility", price: "$800", desc: "Branding + Mobile First Site." },
-        { title: "Premium Showcase Website", price: "$1,500", desc: "Ultra-fast site & Pro SEO." }
-      ],
-      cta: "Order via WhatsApp",
-      switch: "Français"
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatus(null);
+    
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    
+    const { error } = await supabase
+      .from('messages')
+      .insert([{ 
+        name: formData.get('name'), 
+        email: formData.get('email'), 
+        content: formData.get('message') 
+      }]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      setStatus({ type: 'error', msg: "Zut ! Une erreur est survenue : " + error.message });
+    } else {
+      setStatus({ type: 'success', msg: "Message reçu ! Elite Stack Agency vous recontactera très vite." });
+      form.reset(); // Correction de l'erreur reset
     }
   };
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
-      {/* BOUTON LANGUE */}
-      <div className="flex justify-end">
-        <button onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')} className="border border-neutral-800 px-4 py-2 rounded-full text-sm">
-          {content[lang].switch}
-        </button>
-      </div>
-
-      {/* SECTION HERO */}
-      <div className="py-20 text-center">
-        <h1 className="text-6xl font-black mb-4">{content[lang].hero.title}</h1>
-        <p className="text-neutral-500 text-xl mb-10">{content[lang].hero.desc}</p>
-        {/* BARRE DES TECHNOLOGIES - Preuve d'expertise */}
-        <div className="flex flex-wrap justify-center gap-6 mb-16 opacity-50 grayscale hover:grayscale-0 transition-all">
-          <span className="font-bold tracking-widest text-sm">NEXT.JS 15</span>
-          <span className="font-bold tracking-widest text-sm">TYPESCRIPT</span>
-          <span className="font-bold tracking-widest text-sm">TAILWIND CSS</span>
-          <span className="font-bold tracking-widest text-sm">SUPABASE</span>
+    <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6">
+      <div className="w-full max-w-xl bg-[#111] border border-white/10 p-8 rounded-2xl shadow-2xl">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Elite Stack Agency
+          </h1>
+          <p className="text-gray-400 mt-2">Parlons de votre prochain projet digital.</p>
         </div>
-        <a href="https://wa.me/+22893591643" className="bg-blue-600 px-10 py-4 rounded-2xl font-bold text-lg">
-          {content[lang].cta}
-        </a>
-      </div>
 
-      {/* SECTION SERVICES (GRILLE) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-10">
-        {content[lang].services.map((service, index) => (
-          <div key={index} className="bg-neutral-900 border border-neutral-800 p-8 rounded-3xl hover:border-blue-500 transition-all group">
-            <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
-            <div className="text-blue-500 text-3xl font-black mb-4">{service.price}</div>
-            <p className="text-neutral-400">{service.desc}</p>
-            <div className="mt-6 text-sm text-neutral-600 group-hover:text-blue-400 transition-colors">
-              {lang === 'fr' ? "En savoir plus →" : "Learn more →"}
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Nom complet</label>
+            <input name="name" type="text" required placeholder="Edem Dalivo"
+              className="w-full bg-[#1a1a1a] border border-white/5 rounded-lg p-3 focus:border-blue-500 outline-none transition-all" />
           </div>
-        ))}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Email professionnel</label>
+            <input name="email" type="email" required placeholder="edem@example.com"
+              className="w-full bg-[#1a1a1a] border border-white/5 rounded-lg p-3 focus:border-blue-500 outline-none transition-all" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Votre message</label>
+            <textarea name="message" required placeholder="Décrivez votre besoin..." rows={4}
+              className="w-full bg-[#1a1a1a] border border-white/5 rounded-lg p-3 focus:border-blue-500 outline-none transition-all resize-none" />
+          </div>
+
+          <button type="submit" disabled={isSubmitting}
+            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 font-bold py-4 rounded-lg transition-all shadow-lg shadow-blue-500/20">
+            {isSubmitting ? 'Envoi en cours...' : 'Propulser mon projet'}
+          </button>
+
+          {status && (
+            <div className={`p-4 rounded-lg text-center animate-fade-in ${status.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+              {status.msg}
+            </div>
+          )}
+        </form>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
