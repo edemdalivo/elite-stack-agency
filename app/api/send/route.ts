@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Cette version permet au build de Vercel de passer sans erreur
+const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
 
 export async function POST(request: Request) {
   try {
