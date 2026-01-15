@@ -1,7 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-// Cette version permet au build de Vercel de passer sans erreur
 const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
 
 export async function POST(request: Request) {
@@ -13,16 +12,20 @@ export async function POST(request: Request) {
       to: ['edemdalivo93@gmail.com'],
       subject: `🚀 Nouveau projet de ${name}`,
       html: `
-        <h2>Nouveau message reçu !</h2>
-        <p><strong>Nom :</strong> ${name}</p>
-        <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Message :</strong></p>
-        <p>${content}</p>
-      `
+        <div style="font-family: sans-serif; color: #333;">
+          <h2>Nouveau message de contact</h2>
+          <p><strong>Nom :</strong> ${name}</p>
+          <p><strong>Email :</strong> ${email}</p>
+          <p><strong>Message :</strong></p>
+          <div style="background: #f4f4f4; p: 15px; border-left: 4px solid #3b82f6;">
+            ${content}
+          </div>
+        </div>
+      `,
     });
 
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    return NextResponse.json({ error });
+    return NextResponse.json({ error: 'Erreur envoi' }, { status: 500 });
   }
 }
