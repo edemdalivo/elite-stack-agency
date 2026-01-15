@@ -19,23 +19,39 @@ export default function AgencyPage() {
     
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    // On prépare les données pour les deux envois
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const content = formData.get('message') as string;
     
-    const { error } = await supabase
+    // 1. Envoi à Supabase
+    const { error: supabaseError } = await supabase
       .from('messages')
-      .insert([{ 
-        name: formData.get('name'), 
-        email: formData.get('email'), 
-        content: formData.get('message') 
-      }]);
+      .insert([{ name, email, content }]);
 
-    setIsSubmitting(false);
-
-    if (error) {
-      setStatus({ type: 'error', msg: "Erreur : " + error.message });
-    } else {
-      setStatus({ type: 'success', msg: "Message reçu ! Elite Stack Agency vous recontactera." });
-      form.reset();
+    if (supabaseError) {
+      setIsSubmitting(false);
+      setStatus({ type: 'error', msg: "Erreur Supabase : " + supabaseError.message });
+      return;
     }
+
+    // 2. Envoi de la notification par email (On le fait seulement si Supabase a réussi)
+    try {
+      await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, content }),
+      });
+    } catch (emailError) {
+      console.error("Erreur d'envoi d'email:", emailError);
+      // On ne bloque pas l'utilisateur si seul l'email échoue
+    }
+
+    // 3. Finalisation
+    setIsSubmitting(false);
+    setStatus({ type: 'success', msg: "Message reçu ! Elite Stack Agency vous recontactera." });
+    form.reset();
   };
 
   return (
