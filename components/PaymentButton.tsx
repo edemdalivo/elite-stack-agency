@@ -2,11 +2,18 @@
 
 import { useState, useEffect } from 'react'
 
+// 1. On déclare l'interface pour que TypeScript ne râle plus
+declare global {
+  interface Window {
+    FedaPay: any;
+  }
+}
+
 export default function PaymentButton({ amount, packageName }: { amount: string, packageName: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Chargement sécurisé du script au démarrage de la page
+    // 2. Chargement sécurisé du script au démarrage de la page
     const script = document.createElement('script');
     script.src = "https://cdn.fedapay.com/checkout.js?v=1.1.7";
     script.async = true;
@@ -22,7 +29,7 @@ export default function PaymentButton({ amount, packageName }: { amount: string,
   const handlePayment = () => {
     const cleanAmount = parseInt(amount.replace(/\s/g, ''));
 
-    // 2. Utilisation de la méthode universelle d'initialisation
+    // 3. Utilisation de la méthode universelle d'initialisation
     if (window.FedaPay) {
       const widget = window.FedaPay.init({
         public_key: 'pk_sandbox_RlwO8l2n65YYSDDsSRnujMgl', // Ta clé détectée sur tes captures
@@ -31,7 +38,7 @@ export default function PaymentButton({ amount, packageName }: { amount: string,
           description: `Paiement ${packageName} - Elite Stack Agency`
         },
         customer: {
-          // On laisse vide ou on demande à FedaPay de s'en charger
+          // 4. On laisse vide ou on demande à FedaPay de s'en charger
           email: '', 
           lastname: '',
           firstname: ''
