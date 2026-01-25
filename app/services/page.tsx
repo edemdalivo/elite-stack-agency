@@ -17,7 +17,7 @@ const CONTENT = {
     packages: [
       {
         name: 'Pack Bronze',
-        price: '150 000',
+        price: '1000',
         description: 'Idéal pour les artisans et indépendants.',
         features: ['Site Vitrine 1 page', 'Formulaire de contact', 'Hébergement 1 an', 'Support Email'],
         color: 'border-white/10'
@@ -49,7 +49,7 @@ const CONTENT = {
     packages: [
       {
         name: 'Bronze Pack',
-        price: '150 000',
+        price: '1000',
         description: 'Perfect for freelancers and small shops.',
         features: ['1-Page Showcase Site', 'Contact Form', '1-Year Hosting', 'Email Support'],
         color: 'border-white/10'
