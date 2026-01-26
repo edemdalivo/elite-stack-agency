@@ -4,8 +4,10 @@ import { supabase } from '@/lib/supabase';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
-    // 🛡️ Correction ici : on vérifie plusieurs endroits pour trouver l'événement
+
+    // 1. 🔍 CECI EST LA LIGNE MAGIQUE : elle va nous montrer tout le contenu dans les logs Vercel
+    console.log("CONTENU COMPLET DU WEBHOOK :", JSON.stringify(body, null, 2));
+
     const event = body.event || body.type; 
     const transaction = body.entity || body.data?.object;
 
