@@ -4,33 +4,35 @@ import { supabase } from '@/lib/supabase';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("Webhook reçu !");
 
-    // 1. 🔍 CECI EST LA LIGNE MAGIQUE : elle va nous montrer tout le contenu dans les logs Vercel
-    console.log("CONTENU COMPLET DU WEBHOOK :", JSON.stringify(body, null, 2));
+    // 🎯 Extraction précise selon ton log
+    const eventName = body.name; 
+    const transaction = body.entity;
 
-    const event = body.event || body.type; 
-    const transaction = body.entity || body.data?.object;
+    // Récupération de l'email (on cherche dans metadata si customer est vide)
+    const customerEmail = transaction.metadata?.paid_customer?.email || "email-inconnu@test.com";
 
-    console.log(`Événement détecté : ${event}`); // Utile pour voir dans les logs Vercel
+    console.log(`Événement détecté : ${eventName}`);
 
-    // 🛡️ LOGIQUE DE TEST : On accepte 'approved' ET 'declined'
-    if (event === 'transaction.approved' || event === 'transaction.declined') {
+    // ✅ On accepte les deux pour le test
+    if (eventName === 'transaction.approved' || eventName === 'transaction.declined') {
       
       const { error } = await supabase
         .from('sales')
         .insert([{ 
-          email: transaction.customer.email, 
+          email: customerEmail, 
           amount: transaction.amount, 
           package: transaction.description, 
-          status: event === 'transaction.approved' ? 'paid' : 'failed' 
+          status: eventName === 'transaction.approved' ? 'paid' : 'failed' 
         }]);
 
       if (error) {
-        console.error("Erreur Supabase:", error.message);
+        console.error("Erreur Supabase détaillée:", error);
         return NextResponse.json({ error: "Database error" }, { status: 500 });
       }
 
-      console.log(`✅ SYNCHRO RÉUSSIE : ${transaction.customer.email} enregistré avec le statut ${event}`);
+      console.log(`✅ SUCCÈS : ${customerEmail} enregistré dans Supabase !`);
       return NextResponse.json({ message: 'Success' }, { status: 200 });
     }
 
