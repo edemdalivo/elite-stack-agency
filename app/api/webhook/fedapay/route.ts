@@ -4,10 +4,12 @@ import { supabase } from '@/lib/supabase';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const event = body.event; 
-    const transaction = body.entity;
+    
+    // 🛡️ Correction ici : on vérifie plusieurs endroits pour trouver l'événement
+    const event = body.event || body.type; 
+    const transaction = body.entity || body.data?.object;
 
-    console.log(`Événement reçu : ${event}`); // Utile pour voir dans les logs Vercel
+    console.log(`Événement détecté : ${event}`); // Utile pour voir dans les logs Vercel
 
     // 🛡️ LOGIQUE DE TEST : On accepte 'approved' ET 'declined'
     if (event === 'transaction.approved' || event === 'transaction.declined') {
