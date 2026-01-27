@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       console.log(`✅ SUCCÈS : ${customerEmail} enregistré dans Supabase !`);
 
       // 3. LOGIQUE D'EMAIL (Uniquement si le paiement est RÉUSSI)
-      if (eventName === 'transaction.approved') {
+      if (eventName === 'transaction.approved' || eventName === 'transaction.declined') {
         try {
           // EMAIL POUR LE CLIENT (Accusé de réception + Contacts)
           await resend.emails.send({
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
                 <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
                 <p><strong>Besoin d'aide immédiate ? Contactez-nous :</strong></p>
                 <ul style="list-style: none; padding: 0;">
-                  <li style="margin-bottom: 15px;">✅ <strong>WhatsApp :</strong> <a href="https://wa.me/22893591643" style="color: #25D366; text-decoration: none;">+228 93 59 16 43</a></li>
+                  <li style="margin-bottom: 15px;">✅ <strong>WhatsApp :</strong> <a href="https://wa.me/+22893591643" style="color: #25D366; text-decoration: none;">+228 93 59 16 43</a></li>
                   <li style="margin-bottom: 15px;">📧 <strong>Email :</strong> <a href="mailto:edemdalivo93@gmail.com" style="color: #007bff; text-decoration: none;">edemdalivo93@gmail.com</a></li>
                   <li style="margin-bottom: 15px;">📞 <strong>Appel direct :</strong> +228 93 59 16 43</li>
                 </ul>
