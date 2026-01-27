@@ -156,13 +156,31 @@ export default function AdminDashboard() {
               <>
                 {/* CARTES DE RÉSUMÉ (REVENUS & NOMBRE DE VENTES) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-green-600/20 to-emerald-600/5 border border-green-500/20 p-6 rounded-3xl">
-                    <p className="text-green-500 text-xs font-black uppercase tracking-widest mb-2">Chiffre d'Affaires</p>
-                    <h2 className="text-4xl font-black text-white">{totalRevenue.toLocaleString('fr-FR')} <span className="text-sm font-normal text-green-500">CFA</span></h2>
+                  {/* CARTE CHIFFRE D'AFFAIRES AVEC EFFET GLOW */}
+                  <div className="relative group overflow-hidden bg-gradient-to-br from-green-600/20 to-emerald-600/5 border border-green-500/30 p-6 rounded-3xl shadow-[0_0_20px_rgba(34,197,94,0.05)] transition-all hover:shadow-[0_0_30px_rgba(34,197,94,0.15)]">
+                    {/* Petit effet de lueur en arrière-plan */}
+                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-500/10 blur-3xl rounded-full group-hover:bg-green-500/20 transition-all"></div>
+
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <p className="text-green-500 text-[10px] font-black uppercase tracking-[0.2em]">Flux de Trésorerie</p>
+                      </div>
+                      
+                      <h2 className="text-4xl font-black text-white tracking-tighter flex items-baseline gap-2">
+                        {totalRevenue.toLocaleString('fr-FR')} 
+                        <span className="text-sm font-medium text-green-500/80">CFA</span>
+                      </h2>
+                      
+                      <p className="text-[9px] text-green-500/40 mt-1 uppercase font-bold tracking-widest">Compte vérifié en temps réel</p>
+                    </div>
                   </div>
-                  <div className="bg-white/5 border border-white/10 p-6 rounded-3xl">
-                    <p className="text-gray-500 text-xs font-black uppercase tracking-widest mb-2 text-white">Ventes Réussies</p>
+
+                  {/* CARTE NOMBRE DE VENTES */}
+                  <div className="bg-white/5 border border-white/10 p-6 rounded-3xl flex flex-col justify-center">
+                    <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Ventes Réussies</p>
                     <h2 className="text-4xl font-black text-white">{sales.filter(s => s.status === 'paid').length}</h2>
+                    <p className="text-[9px] text-gray-600 mt-1 uppercase font-bold">Transactions confirmées</p>
                   </div>
                 </div>
 
