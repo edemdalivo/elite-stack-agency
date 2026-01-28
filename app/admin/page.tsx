@@ -95,7 +95,6 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#050505] text-white p-8 font-sans">
       
-      {/* --- CONFIGURATION STYLES (CORRIGÉ POUR VERCEL) --- */}
       <style jsx global>{`
         @keyframes rgbPulse {
           0% { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
@@ -119,10 +118,10 @@ export default function AdminDashboard() {
           <div>
             <h1 className="text-3xl font-black tracking-tighter uppercase italic">Elite Stack Dashboard</h1>
             <div className="flex gap-4 mt-6 no-print">
-              <button onClick={() => setActiveTab('messages')} className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'messages' ? 'bg-blue-600 text-white' : 'bg-white/5 text-gray-500'}`}>
+              <button onClick={() => setActiveTab('messages')} className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'messages' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white/5 text-gray-500'}`}>
                 Messages ({messages.length})
               </button>
-              <button onClick={() => setActiveTab('sales')} className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'sales' ? 'bg-green-600 text-white' : 'bg-white/5 text-gray-500'}`}>
+              <button onClick={() => setActiveTab('sales')} className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'sales' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-white/5 text-gray-500'}`}>
                 Ventes ({sales.length})
               </button>
             </div>
@@ -142,9 +141,12 @@ export default function AdminDashboard() {
                 messages.map((msg) => (
                   <div key={msg.id} className="bg-[#0A0A0A] border border-white/10 p-6 rounded-3xl relative group transition-all hover:border-blue-500/30">
                     <button onClick={() => deleteData(msg.id, 'messages')} className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 text-red-500 text-[10px] font-black uppercase no-print">Supprimer</button>
-                    <h3 className="font-black text-blue-500 uppercase tracking-tighter text-lg">{msg.name}</h3>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-black text-blue-500 uppercase tracking-tighter text-lg">{msg.name}</h3>
+                      <span className="text-[10px] text-gray-600 font-bold">{new Date(msg.created_at).toLocaleString('fr-FR')}</span>
+                    </div>
                     <p className="text-gray-400 text-xs mb-4">{msg.email}</p>
-                    <div className="bg-white/[0.02] p-6 rounded-2xl border border-white/5 italic text-gray-300 text-sm">"{msg.content}"</div>
+                    <div className="bg-white/[0.02] p-6 rounded-2xl border border-white/5 italic text-gray-300 text-sm leading-relaxed">"{msg.content}"</div>
                   </div>
                 ))
               )
@@ -170,12 +172,15 @@ export default function AdminDashboard() {
                 <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0A]">
                   <table className="w-full text-left">
                     <thead className="bg-white/5 text-[10px] font-black uppercase text-gray-500 tracking-widest">
-                      <tr><th className="p-6">Client</th><th className="p-6 text-center">Pack</th><th className="p-6 text-center">Montant</th><th className="p-6 text-right">Statut</th></tr>
+                      <tr><th className="p-6">Client / Date</th><th className="p-6 text-center">Pack</th><th className="p-6 text-center">Montant</th><th className="p-6 text-right">Statut</th></tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {sales.map((sale) => (
                         <tr key={sale.id} className="hover:bg-white/[0.02] group transition-all">
-                          <td className="p-6"><div className="text-sm font-black text-white uppercase">{sale.email}</div></td>
+                          <td className="p-6">
+                            <div className="text-sm font-black text-white uppercase">{sale.email}</div>
+                            <div className="text-[10px] text-gray-600 font-bold mt-1">{new Date(sale.created_at).toLocaleString('fr-FR')}</div>
+                          </td>
                           <td className="p-6 text-center text-[11px] text-gray-400 font-bold uppercase">{sale.package}</td>
                           <td className="p-6 text-center font-black text-sm text-white">{sale.amount.toLocaleString('fr-FR')} CFA</td>
                           <td className="p-6 text-right">
