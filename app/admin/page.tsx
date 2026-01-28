@@ -10,6 +10,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)        // État de chargement
   const [isAuthenticated, setIsAuthenticated] = useState(false) // État de la connexion
   const [password, setPassword] = useState('')        // Saisie du mot de passe
+  const [showPassword, setShowPassword] = useState(false)      // État pour afficher/masquer l'oeil
+  const [lastUpdate, setLastUpdate] = useState(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }))
 
   // --- LOGIQUE DE CONNEXION ---
   const handleLogin = (e: React.FormEvent) => {
@@ -36,6 +38,7 @@ export default function AdminDashboard() {
       console.error('Erreur:', error)
     } finally {
       setLoading(false)
+      setLastUpdate(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }))
     }
   }
 
@@ -62,14 +65,35 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-black flex items-center justify-center p-4 text-white font-sans">
         <form onSubmit={handleLogin} className="bg-[#0A0A0A] p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl">
           <h2 className="text-2xl font-black mb-6 tracking-tighter uppercase text-center italic text-blue-500">Elite Access</h2>
-          <input 
-            type="password" 
-            placeholder="Mot de passe secret"
-            className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl mb-6 focus:border-blue-500 outline-none text-white text-center"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            autoFocus
-          />
+  
+          <div className="relative mb-6">
+            <input 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Mot de passe secret"
+              className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl focus:border-blue-500 outline-none text-white text-center"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              autoFocus
+            />
+            {/* LE BOUTON OEIL */}
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+            >
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.413 8.245 7.051 5 12 5c4.949 0 8.587 3.245 9.964 6.678.028.068.028.143 0 .211C20.587 15.755 16.949 19 12 19c-4.949 0-8.587-3.245-9.964-6.678z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              )}
+            </button>
+          </div>
+
           <button className="w-full bg-blue-600 hover:bg-blue-500 text-white p-5 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20">
             Vérifier l'identité
           </button>
@@ -153,19 +177,40 @@ export default function AdminDashboard() {
               <>
                 {/* CARTES DE RÉSUMÉ AVEC EFFET VERT GLOW */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  {/* Carte Chiffre d'Affaires */}
-                  <div className="relative group overflow-hidden bg-gradient-to-br from-green-600/20 to-emerald-600/5 border border-green-500/30 p-8 rounded-3xl shadow-[0_0_20px_rgba(34,197,94,0.05)] transition-all hover:shadow-[0_0_30px_rgba(34,197,94,0.15)]">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-500/10 blur-3xl rounded-full group-hover:bg-green-500/20 transition-all"></div>
+                  {/* CARTE CHIFFRE D'AFFAIRES AVEC HORAIRE ET POINT RGB */}
+                  <div className="relative group overflow-hidden bg-[#0A0A0A] border border-green-500/30 p-8 rounded-3xl transition-all duration-500 hover:border-green-400 hover:shadow-[0_0_40px_8px_rgba(34,197,94,0.15)]">
+  
+                    {/* Animation du point Multicolore (Custom CSS via style tag) */}
+                    <style jsx>{`
+                      @keyframes rgbPulse {
+                        0% { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; } /* Vert */
+                        33% { background-color: #3b82f6; box-shadow: 0 0 8px #3b82f6; } /* Bleu */
+                        66% { background-color: #ec4899; box-shadow: 0 0 8px #ec4899; } /* Rose */
+                        100% { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; } /* Retour Vert */
+                      }
+                      .animate-rgb {
+                        animation: rgbPulse 4s infinite linear;
+                      }
+                    `}</style>
+
+                    <div className="absolute -right-4 -top-4 w-32 h-32 bg-green-500/5 blur-[50px] rounded-full"></div>
+
                     <div className="relative z-10">
                       <div className="flex items-center gap-2 mb-4">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        {/* Le point qui change de couleur */}
+                        <div className="w-2 h-2 rounded-full animate-rgb"></div>
                         <p className="text-green-500 text-[10px] font-black uppercase tracking-[0.2em]">Flux de Trésorerie</p>
                       </div>
+    
                       <h2 className="text-5xl font-black text-white tracking-tighter flex items-baseline gap-2">
                         {totalRevenue.toLocaleString('fr-FR')} 
-                        <span className="text-sm font-medium text-green-500/80 text-white">CFA</span>
+                        <span className="text-sm font-medium text-green-500/80">CFA</span>
                       </h2>
-                      <p className="text-[9px] text-green-500/40 mt-2 uppercase font-bold tracking-widest">Vérifié en direct</p>
+    
+                      {/* Affichage de l'heure de mise à jour dynamique */}
+                      <p className="text-[9px] text-green-500/40 mt-2 uppercase font-bold tracking-widest italic">
+                        Vérifié à {lastUpdate}
+                      </p>
                     </div>
                   </div>
 
