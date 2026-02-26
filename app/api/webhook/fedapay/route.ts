@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       }
 
       // B. Envoi de l'Email au Client via ton API centrale (/api/send)
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://elitestack.agency';
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://elite-stack-agency.vercel.app';
       
       try {
         await fetch(`${appUrl}/api/send`, {
