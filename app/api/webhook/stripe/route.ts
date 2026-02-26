@@ -2,13 +2,21 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27' as any,
-});
+// On n'initialise Stripe QUE si la clé existe, sinon on met null
+// Cela évite l'erreur "Neither apiKey nor config provided" pendant le build Vercel
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-01-27' as any })
+  : null;
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
+  // Vérification de sécurité si Stripe n'est pas prêt
+  if (!stripe) {
+    console.error("STRIPE_SECRET_KEY is missing");
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+  }
+
   const body = await req.text();
   const sig = req.headers.get('stripe-signature')!;
 
