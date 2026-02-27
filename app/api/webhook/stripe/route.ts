@@ -23,11 +23,16 @@ export async function POST(req: Request) {
   let event;
 
   // 1. SÉCURITÉ : VÉRIFICATION DE LA SIGNATURE STRIPE
+  // 1. SÉCURITÉ : VÉRIFICATION DE LA SIGNATURE STRIPE
   try {
-    event = stripe.webhooks.constructEvent(body, sig, endpointSecret!);
+    if (!sig || !endpointSecret) {
+      throw new Error("Signature ou Secret manquant");
+    }
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
   } catch (err: any) {
-    console.error("❌ Erreur de signature Stripe");
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    console.error("❌ Erreur Webhook:", err.message);
+    // On renvoie l'erreur précise pour la voir dans les logs Vercel
+    return NextResponse.json({ error: err.message }, { status: 400 }); 
   }
 
   // 2. TRAITEMENT LORSQUE LE PAIEMENT EST RÉUSSI
