@@ -23,7 +23,6 @@ export async function POST(req: Request) {
   let event;
 
   // 1. SÉCURITÉ : VÉRIFICATION DE LA SIGNATURE STRIPE
-  // 1. SÉCURITÉ : VÉRIFICATION DE LA SIGNATURE STRIPE
   try {
     if (!sig || !endpointSecret) {
       throw new Error("Signature ou Secret manquant");
@@ -98,3 +97,5 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ received: true }, { status: 200 });
 }
+
+// Fin du fichier - Mise à jour des variables v2
